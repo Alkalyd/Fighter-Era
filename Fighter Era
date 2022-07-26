@@ -1,0 +1,195 @@
+getgenv().AutoJob = false
+getgenv().AutoStrength = false
+------------------------------------------
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+
+local Window = Library.CreateLib("D's World", "Midnight")
+
+local Tab = Window:NewTab("Auto Farm")
+
+local Section = Tab:NewSection("Auto Stats")
+local Section1 = Tab:NewSection("Auto Job")
+------------------------------------------
+local plr = game.Players.LocalPlayer
+local character = plr.character
+local Humanoid = character:FindFirstChild("Humanoid")
+local HRP = character:FindFirstChild("HumanoidRootPart")
+--------------------------------------------------------Job Stuff
+local Job = game:GetService("Workspace").QuestBoards.QuestBoard
+local JobBoard = game:GetService("Workspace").QuestBoards.QuestBoard.BoardModel
+local QuestCheck = plr.Stats:FindFirstChild("Quest")
+local InfrontQuestBoard = CFrame.new(-7826.09619, 38.0552216, -919.446167, -0.0345787257, 1.10103704e-08, -0.999401987, 5.78849253e-08, 1, 9.0141743e-09, 0.999401987, -5.75386103e-08, -0.0345787257)
+local distnace = (HRP.Position - JobBoard.Position).magnitude
+local v1 = 2
+
+local Pizza = "Deliver pizza to a party"
+local Groceries = "Pickup Groceries and deliver them to the store"
+----------------------------------------------------------Stats Stuff
+local ClickPart = game:GetService("Workspace").yeslol.mmm["Spar Training $250"].Head
+local ClickDetector = game:GetService("Workspace").yeslol.mmm["Spar Training $250"].ClickDetector
+
+local Gym = CFrame.new(-7901.92334, 38.2913055, -858.892883, -0.0236020163, -9.10961884e-09, 0.999721408, 1.03069482e-08, 1, 9.35548972e-09, -0.999721408, 1.05248859e-08, -0.0236020163)
+local SparBuyerdistance = (HRP.Position - ClickPart.Position).magnitude
+local v2 = 30
+
+local Debounce = false
+local Bag
+
+-----------------------------------------------------------Functions
+function BuySparTraining()
+    if SparBuyerdistance > v2 then
+        HRP.CFrame = Gym
+        wait(.25)
+        fireclickdetector(ClickDetector)
+    elseif SparBuyerdistance < v2 then
+        fireclickdetector(ClickDetector)
+    end
+end
+
+function AutoStrength(v)
+    spawn(function()
+
+        function Update()
+            if v == "1" then
+                Bag = CFrame.new(-7908.29785, 38.2674789, -885.958557, -0.0698079839, 8.36485796e-08, 0.997560441, -3.05415888e-08, 1, -8.59904077e-08, -0.997560441, -3.64698955e-08, -0.0698079839)
+            elseif v == "2" then
+                Bag = CFrame.new(-7908.72363, 38.2913055, -871.957703, -0.000133506488, -4.39597123e-08, 1, -6.85473438e-08, 1, 4.39505605e-08, -1, -6.85414818e-08, -0.000133506488)
+            elseif v == "3" then
+                Bag = CFrame.new(-7908.35352, 38.2913055, -856.911743, -0.0466199033, 5.93910379e-08, 0.998912692, -1.91487395e-08, 1, -6.03493646e-08, -0.998912692, -2.19413998e-08, -0.0466199033)
+            elseif v == "4" then
+                Bag = CFrame.new(-7908.65381, 38.2913055, -843.143921, -0.0289576575, 1.31353373e-08, 0.999580622, -7.94264743e-09, 1, -1.33709452e-08, -0.999580622, -8.32650837e-09, -0.0289576575)
+            elseif v == "5" then
+                Bag = CFrame.new(-7908.80176, 38.2913055, -829.891357, -0.0638069883, 5.27909449e-08, 0.997962236, -2.31723316e-08, 1, -5.43803154e-08, -0.997962236, -2.65949573e-08, -0.0638069883)
+            elseif v == "6" then
+                Bag = CFrame.new(-7883.1001, 38.2517319, -878.545349, 0.0652970374, 6.85342769e-08, -0.997865856, 6.60765025e-08, 1, 7.30046779e-08, 0.997865856, -7.07024768e-08, 0.0652970374)
+            elseif v == "7" then
+                Bag = CFrame.new(-7883.28857, 38.2517319, -862.780212, -0.0347628295, 6.81772638e-09, -0.999395609, 4.24531983e-08, 1, 5.34516387e-09, 0.999395609, -4.22417266e-08, -0.0347628295)
+            elseif v == "8" then
+                Bag = CFrame.new(-7883.20947, 38.2517319, -846.393127, 0.0232443027, 3.54732466e-09, -0.999729812, -3.82018648e-08, 1, 2.66006772e-09, 0.999729812, 3.81297127e-08, 0.0232443027)
+            end
+        end
+
+        Update()
+
+        while getgenv().AutoStrength == true do wait()
+            if getgenv().AutoStrength == false then
+                Debounce = false
+                Humanoid:UnequipTools()
+            end
+
+            local Gloves = plr.Backpack:FindFirstChild("Spar Training") or character:FindFirstChild("Spar Training")
+            local Combat = plr.Backpack:FindFirstChild("Basic Combat") or character:FindFirstChild("Basic Combat")
+            local EqGloves = character:FindFirstChild("gloveyuh")
+           
+            Update()
+
+            if Gloves or EqGloves and Bag ~= nil then
+                HRP.CFrame = Bag
+                if Debounce == false then
+                    Combat.Parent = game.Players.LocalPlayer.Character
+                    Gloves.Parent = game.Players.LocalPlayer.Character
+
+                    Gloves.Equipped:Connect(function()
+                        Gloves:Activate()
+                        Debounce = true
+                    end)
+            
+                    Combat.Equipped:Connect(function()
+                        while true do wait()
+                            if not Debounce then break end
+                            Combat:Activate()
+                        end
+                    end)
+                end
+
+            elseif not Gloves or not EqGloves then
+                Debounce = false
+                Humanoid:UnequipTools()
+                BuySparTraining()
+            end
+        end
+    end)
+end--function end
+-------------------------------------------------------------
+function PizzaDelivery(pv)
+    local DeliveryMarker = game:GetService("Workspace").PizzaDetector
+    for i, v in pairs(pv.Parent.Parent:GetChildren()) do 
+        if v.Name == "ClickDetector" then
+            if distnace > v1 and not QuestCheck then
+                HRP.CFrame = InfrontQuestBoard
+                wait(0.2)
+                fireclickdetector(v)
+                firetouchinterest(character.Torso, DeliveryMarker, 0)
+                firetouchinterest(character.Torso, DeliveryMarker, 1)
+            elseif distnace <= v1 and not QuestCheck then
+                fireclickdetector(v)
+                firetouchinterest(character.Torso, DeliveryMarker, 0)
+                firetouchinterest(character.Torso, DeliveryMarker, 1)
+            end
+        end
+    end
+end--function end
+
+function GroceriesDelivery(pv)
+    local Pickup = game:GetService("Workspace").milkf
+    local Delivery = game:GetService("Workspace").milkyd
+
+    for i, v in pairs(pv.Parent.Parent:GetChildren()) do 
+        if v.Name == "ClickDetector" then
+            if distnace > v1 and not QuestCheck then
+                HRP.CFrame = InfrontQuestBoard
+                wait(0.2)
+                fireclickdetector(v)
+                firetouchinterest(character.Torso, Pickup, 0)
+                firetouchinterest(character.Torso, Pickup, 1)
+
+                firetouchinterest(character.Torso, Delivery, 0)
+                firetouchinterest(character.Torso, Delivery, 1)
+            elseif distnace <= v1 and not QuestCheck then
+                fireclickdetector(v)
+                firetouchinterest(character.Torso, Pickup, 0)
+                firetouchinterest(character.Torso, Pickup, 1)
+
+                firetouchinterest(character.Torso, Delivery, 0)
+                firetouchinterest(character.Torso, Delivery, 1)
+            end
+        end
+    end
+end--function end
+
+
+function AutoQuest()
+    spawn(function ()
+        while getgenv().AutoJob == true do wait()
+            for i, v in pairs(Job:GetDescendants()) do
+                if v.Name == "Desc" then
+                    if v.Text == Pizza then
+                        PizzaDelivery(v)
+                        elseif v.Text == Groceries then
+                        GroceriesDelivery(v)
+                    end
+                end
+            end
+        end
+    end)
+end
+------------------------------------------
+Section:NewLabel("Strength")
+
+Section:NewToggle("Auto Strength", "Auto Strength", function(bool)
+    getgenv().AutoStrength = bool
+    if bool then
+        AutoStrength()
+    end
+end)
+
+Section:NewDropdown("Bag Selector", "DropdownInf", {"1", "2", "3", "4", "5", "6", "7", "8"}, function(currentOption)
+    AutoStrength(currentOption)
+end)
+
+Section1:NewToggle("Auto Job", "Auto Job", function(bool)
+    getgenv().AutoJob = bool
+    if bool then
+        AutoQuest()
+    end
+end)
