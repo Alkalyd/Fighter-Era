@@ -1,15 +1,22 @@
 getgenv().AutoStrength = false
 getgenv().AutoRoadwork = false
 getgenv().AutoJob = false
+getgenv().AutoClanReroll = false
 ------------------------------------------
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
 
 local Window = Library.CreateLib("D's World", "Midnight")
 
-local Tab = Window:NewTab("Auto Farm")
+local Tab1 = Window:NewTab("Auto Farm")
+local Tab2 = Window:NewTab("Teleport")
+local Tab3 = Window:NewTab("Misc")
 
-local Section = Tab:NewSection("Auto Stats")
-local Section1 = Tab:NewSection("Auto Job")
+local T1Section1 = Tab1:NewSection("Auto Stats")
+local T1Section2 = Tab1:NewSection("Auto Job")
+
+local T2Section1 = Tab2:NewSection("Items")
+
+local T3Section1 = Tab3:NewSection("ClanReroll")
 ------------------------------------------
 local plr = game.Players.LocalPlayer
 local character = plr.character
@@ -18,9 +25,9 @@ local HRP = character:FindFirstChild("HumanoidRootPart")
 --------------------------------------------------------Job Stuff
 local Job = game:GetService("Workspace").QuestBoards.QuestBoard
 local JobBoard = game:GetService("Workspace").QuestBoards.QuestBoard.BoardModel
-local QuestCheck = plr.Stats:FindFirstChild("Quest")
 local InfrontQuestBoard = CFrame.new(-7826.09619, 38.0552216, -919.446167, -0.0345787257, 1.10103704e-08, -0.999401987, 5.78849253e-08, 1, 9.0141743e-09, 0.999401987, -5.75386103e-08, -0.0345787257)
 function JUpdate()
+    local QuestCheck = plr.Stats:FindFirstChild("Quest")
     Distnace = (HRP.Position - JobBoard.Position).magnitude
     V1 = 2
 end
@@ -77,11 +84,12 @@ function AutoStrength(v)
         Update()
 
         while getgenv().AutoStrength == true do wait()
-        Update()
             
             local Gloves = plr.Backpack:FindFirstChild("Spar Training") or character:FindFirstChild("Spar Training")
             local Combat = plr.Backpack:FindFirstChild("Basic Combat") or character:FindFirstChild("Basic Combat")
             local EqGloves = character:FindFirstChild("gloveyuh")
+           
+            Update()
 
             if Gloves and not EqGloves or EqGloves and Bag ~= nil then
                 HRP.CFrame = Bag
@@ -149,11 +157,13 @@ function AutoRoadwork()
     end)
 end
 -------------------------------------------------------------
-function PizzaDelivery(pv)
+function PizzaDelivery(pv, OP)
+    local Done = true
     local DeliveryMarker = game:GetService("Workspace").PizzaDetector
     for i, v in pairs(pv.Parent.Parent:GetChildren()) do 
         if v.Name == "ClickDetector" then
             if Distnace > V1 and not QuestCheck then
+                Done = false
                 repeat
                     HRP.CFrame = InfrontQuestBoard
                 until HRP.CFrame == InfrontQuestBoard
@@ -162,22 +172,32 @@ function PizzaDelivery(pv)
                 fireclickdetector(v)
                 firetouchinterest(character.Torso, DeliveryMarker, 0)
                 firetouchinterest(character.Torso, DeliveryMarker, 1)
+                
+                Done = true
+                if Done and HRP.CFrame ~= OP then
+                    repeat
+                        HRP.CFrame = OP
+                    until HRP.CFrame == OP
+                end
             elseif Distnace <= V1 and not QuestCheck then
                 fireclickdetector(v)
                 firetouchinterest(character.Torso, DeliveryMarker, 0)
                 firetouchinterest(character.Torso, DeliveryMarker, 1)
+                wait(.5)
             end
         end
     end
 end--function end
 
-function GroceriesDelivery(pv)
+function GroceriesDelivery(pv, OP)
     local Pickup = game:GetService("Workspace").milkf
     local Delivery = game:GetService("Workspace").milkyd
+    local Done = true
 
     for i, v in pairs(pv.Parent.Parent:GetChildren()) do 
         if v.Name == "ClickDetector" then
             if Distnace > V1 and not QuestCheck then
+                Done = false
                 repeat
                     HRP.CFrame = InfrontQuestBoard
                 until HRP.CFrame == InfrontQuestBoard
@@ -189,6 +209,13 @@ function GroceriesDelivery(pv)
 
                 firetouchinterest(character.Torso, Delivery, 0)
                 firetouchinterest(character.Torso, Delivery, 1)
+
+                Done = true
+                if Done and HRP.CFrame ~= OP then
+                    repeat
+                        HRP.CFrame = OP
+                    until HRP.CFrame == OP
+                end
             elseif Distnace <= V1 and not QuestCheck then
                 fireclickdetector(v)
                 firetouchinterest(character.Torso, Pickup, 0)
@@ -204,15 +231,16 @@ end--function end
 
 function AutoQuest()
     spawn(function ()
+        local OldPos = HRP.CFrame
         while getgenv().AutoJob == true do wait()
             JUpdate()
 
             for i, v in pairs(Job:GetDescendants()) do
                 if v.Name == "Desc" then
                     if v.Text == Pizza then
-                        PizzaDelivery(v)
+                        PizzaDelivery(v, OldPos)
                         elseif v.Text == Groceries then
-                        GroceriesDelivery(v)
+                        GroceriesDelivery(v, OldPos)
                     end
                 end
             end
@@ -220,31 +248,71 @@ function AutoQuest()
     end)
 end
 ------------------------------------------
-Section:NewLabel("Strength")
+function Teleport(var)
+    if var == "StatCheck" then
+        HRP.CFrame = CFrame.new(-7573.4707, 38.2195015, -1209.59436, 0.00471947715, -2.77741563e-08, -0.999988854, 1.08138236e-08, 1, -2.77234289e-08, 0.999988854, -1.06828635e-08, 0.00471947715)
+    end
+end
 
-Section:NewToggle("Auto Strength", "Auto Strength", function(bool)
+function ClanReroll()
+    spawn(function()
+        while getgenv().AutoClanReroll == true do wait()
+            local ClanWanted = {"Mikazuchi", "Kure", "Tank", "Tokita", "Agito", "Gensai", "RaijinTest"}
+            local CurrentClan = plr.Stats.Clan.Value
+            local Money = plr.Stats.Cash.Value
+
+            if Money >= 25000 then
+                local args = {[1] = "???", [2] = "Sure, But its gonna cost $25000", [3] = "Okay"}
+                game:GetService("ReplicatedStorage").Remotes.okoll:InvokeServer(unpack(args))
+                
+                if table.find(ClanWanted, tostring(CurrentClan)) then
+                    break
+                end
+            end
+        end
+    end)
+end
+
+------------------------------------------
+T1Section1:NewLabel("Strength")
+
+T1Section1:NewToggle("Auto Strength", "Auto Strength", function(bool)
     getgenv().AutoStrength = bool
     if bool then
         AutoStrength()
     end
 end)
 
-Section:NewDropdown("Bag Selector", "DropdownInf", {"1", "2", "3", "4", "5", "6", "7", "8"}, function(currentOption)
+T1Section1:NewDropdown("Bag Selector", "DropdownInf", {"1", "2", "3", "4", "5", "6", "7", "8"}, function(currentOption)
     AutoStrength(currentOption)
 end)
 
-Section:NewLabel("Speed")
+T1Section1:NewLabel("Speed")
 
-Section:NewToggle("Auto Roadwork", "Auto Roadwork", function(bool)
+T1Section1:NewToggle("Auto Roadwork", "Make sure to buy Roadwork", function(bool)
     getgenv().AutoRoadwork = bool
     if bool then
         AutoRoadwork()
     end
 end)
 
-Section1:NewToggle("Auto Job", "Auto Job", function(bool)
+T1Section2:NewToggle("Auto Job", "Auto Job", function(bool)
     getgenv().AutoJob = bool
     if bool then
         AutoQuest()
     end
 end)
+
+T2Section1:NewButton("Stat Checker", "Teleport to Stat Checker", function()
+    Teleport("StatCheck")
+end)
+
+T3Section1:NewToggle("Auto Clan Reroll", "Rare clans and above(25000$ needed)", function(bool)
+    getgenv().AutoClanReroll = bool
+    if bool then
+        ClanReroll()
+    end
+end)
+
+
+
