@@ -77,12 +77,11 @@ function AutoStrength(v)
         Update()
 
         while getgenv().AutoStrength == true do wait()
+        Update()
             
             local Gloves = plr.Backpack:FindFirstChild("Spar Training") or character:FindFirstChild("Spar Training")
             local Combat = plr.Backpack:FindFirstChild("Basic Combat") or character:FindFirstChild("Basic Combat")
             local EqGloves = character:FindFirstChild("gloveyuh")
-           
-            Update()
 
             if Gloves and not EqGloves or EqGloves and Bag ~= nil then
                 HRP.CFrame = Bag
