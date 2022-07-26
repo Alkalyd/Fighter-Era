@@ -1,5 +1,6 @@
-getgenv().AutoJob = false
 getgenv().AutoStrength = false
+getgenv().AutoRoadwork = false
+getgenv().AutoJob = false
 ------------------------------------------
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
 
@@ -26,24 +27,22 @@ end
 local Pizza = "Deliver pizza to a party"
 local Groceries = "Pickup Groceries and deliver them to the store"
 ----------------------------------------------------------Stats Stuff
-local ClickPart = game:GetService("Workspace").yeslol.mmm["Spar Training $250"].Head
-local ClickDetector = game:GetService("Workspace").yeslol.mmm["Spar Training $250"].ClickDetector
-
 local Gym = CFrame.new(-7901.92334, 38.2913055, -858.892883, -0.0236020163, -9.10961884e-09, 0.999721408, 1.03069482e-08, 1, 9.35548972e-09, -0.999721408, 1.05248859e-08, -0.0236020163)
 
 local Debounce = false
 local Bag
-
 -----------------------------------------------------------Functions
 function BuySparTraining()
-    local SparBuyerdistance = (HRP.Position - ClickPart.Position).magnitude
-    local v2 = 30
-    if SparBuyerdistance > v2 then
-        HRP.CFrame = Gym
-        wait(.25)
-        fireclickdetector(ClickDetector)
-    elseif SparBuyerdistance < v2 then
-        fireclickdetector(ClickDetector)
+    local SparTrainingFolder = game:GetService("Workspace").yeslol.mmm
+
+    for i, v in pairs(SparTrainingFolder:GetChildren()) do
+        if v.Name == "Spar Training $250" then
+            local distance = (HRP.Position - v.Head.Position).magnitude
+            if math.floor(distance) <= 9 then
+                local Detecor = v.ClickDetector
+                fireclickdetector(Detecor)
+            end
+        end
     end
 end
 
@@ -68,15 +67,16 @@ function AutoStrength(v)
             elseif v == "8" then
                 Bag = CFrame.new(-7883.20947, 38.2517319, -846.393127, 0.0232443027, 3.54732466e-09, -0.999729812, -3.82018648e-08, 1, 2.66006772e-09, 0.999729812, 3.81297127e-08, 0.0232443027)
             end
+            
+            if getgenv().AutoStrength == false then
+                Debounce = false
+                Humanoid:UnequipTools()
+            end
         end
 
         Update()
 
         while getgenv().AutoStrength == true do wait()
-            if getgenv().AutoStrength == false then
-                Debounce = false
-                Humanoid:UnequipTools()
-            end
             
             local Gloves = plr.Backpack:FindFirstChild("Spar Training") or character:FindFirstChild("Spar Training")
             local Combat = plr.Backpack:FindFirstChild("Basic Combat") or character:FindFirstChild("Basic Combat")
@@ -84,7 +84,7 @@ function AutoStrength(v)
            
             Update()
 
-            if Gloves or EqGloves and Bag ~= nil then
+            if Gloves and not EqGloves or EqGloves and Bag ~= nil then
                 HRP.CFrame = Bag
                 if Debounce == false then
                     Combat.Parent = game.Players.LocalPlayer.Character
@@ -112,6 +112,44 @@ function AutoStrength(v)
     end)
 end--function end
 -------------------------------------------------------------
+function AutoRoadwork()
+    spawn(function()
+        while getgenv().AutoRoadwork == true do wait()
+
+            local Roadwork = plr.Backpack:FindFirstChild("Roadwork") or character:FindFirstChild("Roadwork")
+            local RoadworkValue = plr.Roadwork.Value
+            local RWM1 = game:GetService("Workspace").QuestMarkers.RW1
+            local RWM2 = game:GetService("Workspace").QuestMarkers.RW2
+            local RWM3 = game:GetService("Workspace").QuestMarkers.RW3
+            local RWM4 = game:GetService("Workspace").QuestMarkers.RW4
+            local RWM5 = game:GetService("Workspace").QuestMarkers.RW5
+
+            if Roadwork and RoadworkValue == 0 then
+                Roadwork.Parent = game.Players.LocalPlayer.Character
+                Roadwork.Equipped:Connect(function()
+                    Roadwork:Activate()
+                end)
+
+            elseif RoadworkValue == 1 then
+                firetouchinterest(character.Torso, RWM1, 0)
+                firetouchinterest(character.Torso, RWM1, 1)
+            elseif RoadworkValue == 2 then
+                firetouchinterest(character.Torso, RWM2, 0)
+                firetouchinterest(character.Torso, RWM2, 1)
+            elseif RoadworkValue == 3 then
+                firetouchinterest(character.Torso, RWM3, 0)
+                firetouchinterest(character.Torso, RWM3, 1)
+            elseif RoadworkValue == 4 then
+                firetouchinterest(character.Torso, RWM4, 0)
+                firetouchinterest(character.Torso, RWM4, 1)
+            elseif RoadworkValue == 5 then
+                firetouchinterest(character.Torso, RWM5, 0)
+                firetouchinterest(character.Torso, RWM5, 1)
+            end
+        end
+    end)
+end
+-------------------------------------------------------------
 function PizzaDelivery(pv)
     local DeliveryMarker = game:GetService("Workspace").PizzaDetector
     for i, v in pairs(pv.Parent.Parent:GetChildren()) do 
@@ -120,7 +158,7 @@ function PizzaDelivery(pv)
                 repeat
                     HRP.CFrame = InfrontQuestBoard
                 until HRP.CFrame == InfrontQuestBoard
-                
+
                 wait(0.2)
                 fireclickdetector(v)
                 firetouchinterest(character.Torso, DeliveryMarker, 0)
@@ -194,6 +232,15 @@ end)
 
 Section:NewDropdown("Bag Selector", "DropdownInf", {"1", "2", "3", "4", "5", "6", "7", "8"}, function(currentOption)
     AutoStrength(currentOption)
+end)
+
+Section:NewLabel("Speed")
+
+Section:NewToggle("Auto Roadwork", "Auto Roadwork", function(bool)
+    getgenv().AutoRoadwork = bool
+    if bool then
+        AutoRoadwork()
+    end
 end)
 
 Section1:NewToggle("Auto Job", "Auto Job", function(bool)
